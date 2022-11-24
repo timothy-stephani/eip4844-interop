@@ -9,7 +9,7 @@ volumes:
 services:
   execution-node:
     build:
-      context: ./geth
+      context: ./clients/execution/geth
       dockerfile: Dockerfile.geth
     ports:
       - '8545:8545'
@@ -18,14 +18,14 @@ services:
     volumes:
       - 'geth_data:/db'
       - type: bind
-        source: ./geth/geth-genesis.json
+        source: ./clients/execution/geth/geth-genesis.json
         target: /genesis.json
 
   execution-node-2:
     depends_on:
       - execution-node
     build:
-      context: ./geth
+      context: ./clients/execution/geth
       dockerfile: Dockerfile.geth
     environment:
       PEER: execution-node:30303
@@ -35,7 +35,7 @@ services:
     volumes:
       - 'geth_data2:/db'
       - type: bind
-        source: ./geth/geth-genesis.json
+        source: ./clients/execution/geth/geth-genesis.json
         target: /genesis.json
 
   prysm-beacon-node:
@@ -43,7 +43,7 @@ services:
       - execution-node
       - jaeger-tracing
     build:
-      context: ./prysm
+      context: ./clients/consensus/prysm
       dockerfile: Dockerfile.prysm
     environment:
       EXECUTION_NODE_URL: http://execution-node:8545
@@ -63,10 +63,10 @@ services:
         source: ./shared/chain-config.yml
         target: /config/chain-config.yml
       - type: bind
-        source: ./prysm/run_beacon_node.sh
+        source: ./clients/consensus/prysm/run_beacon_node.sh
         target: /usr/local/bin/run_beacon_node.sh
       - type: bind
-        source: ./prysm/prysm-priv-key
+        source: ./clients/consensus/prysm/prysm-priv-key
         target: /etc/prysm-priv-key
 
   prysm-beacon-node-follower:
@@ -75,7 +75,7 @@ services:
       - prysm-beacon-node
       - jaeger-tracing
     build:
-      context: ./prysm
+      context: ./clients/consensus/prysm
       dockerfile: Dockerfile.prysm
     environment:
       EXECUTION_NODE_URL: http://execution-node-2:8545
@@ -95,13 +95,13 @@ services:
         source: ./shared/chain-config.yml
         target: /config/chain-config.yml
       - type: bind
-        source: ./prysm/run_beacon_node.sh
+        source: ./clients/consensus/prysm/run_beacon_node.sh
         target: /usr/local/bin/run_beacon_node.sh
       - type: bind
-        source: ./prysm/run_beacon_node_peer.sh
+        source: ./clients/consensus/prysm/run_beacon_node_peer.sh
         target: /usr/local/bin/run_beacon_node_peer.sh
       - type: bind
-        source: ./prysm/prysm-follower-priv-key
+        source: ./clients/consensus/prysm/prysm-follower-priv-key
         target: /etc/prysm-priv-key
 
   prysm-validator-node:
@@ -109,7 +109,7 @@ services:
       - prysm-beacon-node
       - jaeger-tracing
     build:
-      context: ./prysm
+      context: ./clients/consensus/prysm
       dockerfile: Dockerfile.prysm
     command: >
       validator
@@ -137,7 +137,7 @@ services:
     depends_on:
       - execution-node
     build:
-      context: ./lodestar
+      context: ./clients/consensus/lodestar
       dockerfile: Dockerfile.lodestar
     environment:
       EXECUTION_NODE_URL: http://execution-node:8545
@@ -152,7 +152,7 @@ services:
         source: ./shared/chain-config.yml
         target: /config/chain-config.yml
       - type: bind
-        source: ./lodestar/run_beacon_node.sh
+        source: ./clients/consensus/lodestar/run_beacon_node.sh
         target: /usr/local/bin/run_beacon_node.sh
 
   lodestar-beacon-node-follower:
@@ -160,7 +160,7 @@ services:
       - execution-node-2
       - lodestar-beacon-node
     build:
-      context: ./lodestar
+      context: ./clients/consensus/lodestar
       dockerfile: Dockerfile.lodestar
     environment:
       EXECUTION_NODE_URL: http://execution-node-2:8545
@@ -177,10 +177,10 @@ services:
         source: ./shared/chain-config.yml
         target: /config/chain-config.yml
       - type: bind
-        source: ./lodestar/run_beacon_node.sh
+        source: ./clients/consensus/lodestar/run_beacon_node.sh
         target: /usr/local/bin/run_beacon_node.sh
       - type: bind
-        source: ./lodestar/run_beacon_node_peer.sh
+        source: ./clients/consensus/lodestar/run_beacon_node_peer.sh
         target: /usr/local/bin/run_beacon_node_peer.sh
 
   jaeger-tracing:

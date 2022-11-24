@@ -1,16 +1,16 @@
 [submodule "geth/go-ethereum"]
-	path = geth/go-ethereum
+	path = clients/execution/geth/go-ethereum
 	url = https://github.com/mdehoog/go-ethereum
 	branch = eip-4844
 [submodule "prysm/prysm"]
-	path = prysm/prysm
+	path = clients/consensus/prysm/prysm
 	url = https://github.com/Inphi/prysm
 	branch = eip-4844
 [submodule "lodestar/lodestar"]
-	path = lodestar/lodestar
+	path = clients/consensus/lodestar/lodestar
 	url = https://github.com/dgcoffman/lodestar
 	branch = dgc/eip-4844
 [submodule "erigon/erigon"]
-	path = erigon/erigon
+	path = clients/execution/erigon/erigon
 	url = https://github.com/roberto-bayardo/erigon
 	branch = eip-4844
